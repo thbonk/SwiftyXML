@@ -86,18 +86,6 @@ if let color1 = xml["product"]["catalog_item"]["wrong_size"]["wrong_color"][1].x
 
 ## Installation
 
-#### CocoaPods
-You can use [CocoaPods](http://cocoapods.org/) to install `SwiftyXML` by adding it to your `Podfile`:
-
-```ruby
-platform :ios, '8.0'
-use_frameworks!
-
-target 'MyApp' do
-    pod 'SwiftyXML', '~> 2.0.0'
-end
-```
-
 #### Carthage
 Create a `Cartfile` that lists the framework and run `carthage update`. Follow the [instructions](https://github.com/Carthage/Carthage#if-youre-building-for-ios) to add `$(SRCROOT)/Carthage/Build/iOS/SwiftyXML.framework` to an iOS project.
 
