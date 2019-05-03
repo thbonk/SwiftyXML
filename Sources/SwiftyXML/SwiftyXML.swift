@@ -586,21 +586,21 @@ extension XML {
         return self.toXMLString()
     }
     
-    public func toXMLString() -> String {
+    public func toXMLString(_ trimWhitespaces: Bool = true) -> String {
         var result = ""
         var depth:Int = 0
-        describe(xml: self, depth: &depth, result: &result)
+        describe(xml: self, trimWhitespaces: trimWhitespaces, depth: &depth, result: &result)
         return result
     }
     
-    private func describe(xml: XML, depth:inout Int, result: inout String) {
+    private func describe(xml: XML, trimWhitespaces: Bool, depth:inout Int, result: inout String) {
         if xml.children.isEmpty {
-            result += xml.getCombine(numTabs: depth)
+            result += xml.getCombine(numTabs: depth, trimWhitespaces: trimWhitespaces)
         } else {
-            result += xml.getStartPart(numTabs: depth)
+            result += xml.getStartPart(numTabs: depth, trimWhitespaces: trimWhitespaces)
             depth += 1
             for child in xml.children {
-                describe(xml: child, depth: &depth, result: &result)
+                describe(xml: child, trimWhitespaces: trimWhitespaces, depth: &depth, result: &result)
             }
             depth -= 1
             result += xml.getEndPart(numTabs: depth)
@@ -611,25 +611,29 @@ extension XML {
         return self.attributes.map{ " \($0.0)=\"\($0.1)\"" }.joined()
     }
     
-    private func getStartPart(numTabs:Int) -> String {
-        return getDescription(numTabs: numTabs, closed: false)
+    private func getStartPart(numTabs:Int, trimWhitespaces: Bool) -> String {
+        return getDescription(numTabs: numTabs, closed: false, trimWhitespaces: trimWhitespaces)
     }
     
     private func getEndPart(numTabs:Int) -> String {
         return String(repeating: "\t", count: numTabs) + "</\(name)>\n"
     }
     
-    private func getCombine(numTabs:Int) -> String {
-        return self.getDescription(numTabs: numTabs, closed: true)
+    private func getCombine(numTabs:Int, trimWhitespaces: Bool) -> String {
+        return self.getDescription(numTabs: numTabs, closed: true, trimWhitespaces: trimWhitespaces)
     }
     
-    private func getDescription(numTabs:Int, closed:Bool) -> String {
+    private func getDescription(numTabs:Int, closed:Bool, trimWhitespaces: Bool) -> String {
         var attr = self.getAttributeString()
         attr = attr.isEmpty ? "" : attr + " "
         let tabs = String(repeating: "\t", count: numTabs)
         var valueString: String = ""
         if let v = self.value {
-            valueString = v.trimmingCharacters(in: .whitespacesAndNewlines)
+            if trimWhitespaces {
+                valueString = v.trimmingCharacters(in: .whitespacesAndNewlines)
+            } else {
+                valueString = v
+            }
         }
         if attr.isEmpty {
             switch (closed, self.value) {
